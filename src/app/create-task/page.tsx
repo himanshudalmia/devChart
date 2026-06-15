@@ -1,70 +1,134 @@
 "use client";
 
-import Navbar from '@/components/Navbar'
+import Navbar from "@/components/Navbar";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 const CreateTask = () => {
+  const router = useRouter();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState("low");
+  const [assignee, setAssignee] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-const [title,setTitle] = useState("");
-const [description,setDescription] = useState("");
-const [priority,setPriority] = useState("low");
-
-async function handleSubmit(event: React.FormEvent){
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    setSubmitting(true);
+    try {
+      const response = await fetch("/api/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          description,
+          priority,
+          status: "todo",
+          assignee,
+          dueDate: dueDate || null,
+        }),
+      });
 
-    try{
-        const response = await fetch("/api/tasks",{
-            method: "POST",
+      if (!response.ok) throw new Error("Failed to create task");
 
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ title, description, priority }),
-        });
-
-        const data = await response.json();
-        console.log(data);
-
-        setTitle("");
-        setDescription("");
-        setPriority("low");
-
-        alert("Task created successfully!");
+      router.push("/dashboard");
     } catch (error) {
-        console.error("Error creating task:", error);
-        alert("Failed to create task.");
+      console.error("Error creating task:", error);
+      alert("Failed to create task.");
+    } finally {
+      setSubmitting(false);
     }
-}
+  }
 
-    return (
-        <div>
-            <Navbar />
-            <h1 className="text-6xl font-bold m-3 p-3 text-teal-200 text-outline-black">Want to create a new task?</h1>
+  const inputClass =
+    "w-full p-3 bg-white rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-400 text-black";
 
-            <form onSubmit={handleSubmit} className="flex justify-center flex-col gap-4 m-4 p-3">
+  return (
+    <div style={{ background: "bisque", minHeight: "100vh" }}>
+      <Navbar />
+      <div className="max-w-xl mx-auto px-4 py-8">
+        <h1 className="text-4xl font-bold text-black mb-1">New Task</h1>
+        <p className="text-gray-600 mb-6 text-sm">Fill in the details below to add a task to the board.</p>
 
-                <h3 className="text-2xl">Whats the task name?</h3>
-                <input type="text" placeholder="Task name" value={title}  onChange={(event)=>{setTitle(event.target.value)}} className="w-full p-3 bg-white  rounded-xl focus:outline-none focus:ring-2 focus:ring-white appearance-none" />
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
-                <h3 className="text-2xl">Describe it!!</h3>
-                <textarea  placeholder="Task description" value={description} onChange={(event)=>{setDescription(event.target.value)}} className="w-full p-3 bg-white  rounded-xl  focus:outline-none focus:ring-2 focus:ring-white appearance-none"></textarea>
+          {/* Title */}
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">Task name <span className="text-red-500">*</span></label>
+            <input
+              type="text"
+              placeholder="e.g. Design the login page"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              required
+              className={inputClass}
+            />
+          </div>
 
-                <h3 className="text-2xl">How important is it?</h3>
-                <select
-                    value={priority}
-                    onChange={(event)=>{setPriority(event.target.value)}}
-                    className="w-full p-3 bg-white  rounded-xl  focus:outline-none focus:ring-2 focus:ring-white appearance-none"
-                >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                </select>
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">Description <span className="text-red-500">*</span></label>
+            <textarea
+              placeholder="What needs to be done?"
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              required
+              rows={3}
+              className={inputClass}
+            />
+          </div>
 
-                <button type="submit"  className="w-full p-3 bg-teal-500 text-white font-bold rounded-xl hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-white appearance-none" >Create Task</button>
+          {/* Priority + Assignee side by side */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-black mb-1">Priority</label>
+              <select
+                value={priority}
+                onChange={e => setPriority(e.target.value)}
+                className={inputClass}
+              >
+                <option value="low">🟢 Low</option>
+                <option value="medium">🟡 Medium</option>
+                <option value="high">🔴 High</option>
+              </select>
+            </div>
 
-            </form>
-        </div>
-    )
-}
+            <div>
+              <label className="block text-sm font-semibold text-black mb-1">Assignee</label>
+              <input
+                type="text"
+                placeholder="Team member name"
+                value={assignee}
+                onChange={e => setAssignee(e.target.value)}
+                className={inputClass}
+              />
+            </div>
+          </div>
 
-export default CreateTask
+          {/* Due Date */}
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">Due date <span className="text-gray-400 font-normal">(optional)</span></label>
+            <input
+              type="date"
+              value={dueDate}
+              onChange={e => setDueDate(e.target.value)}
+              className={inputClass}
+            />
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full p-3 bg-black text-teal-200 font-bold rounded-xl hover:bg-gray-800 disabled:opacity-60 transition-colors"
+          >
+            {submitting ? "Creating…" : "Create Task →"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default CreateTask;
