@@ -14,7 +14,7 @@ Live demo: [dev-chart-three.vercel.app](https://dev-chart-three.vercel.app)
 - **Move Buttons** — "← Back" and "Move →" buttons on each card for keyboard/mobile users
 
 ### Additional
-- **Due Dates** — Set deadlines on tasks; overdue ones show a ⚠️ warning automatically
+- **Due Dates** — Set deadlines on tasks; overdue ones show a warning automatically
 - **Assignees** — Assign tasks to team members by name, shown on the card
 - **Task Deletion** — Remove tasks with the × button directly from the board
 
