@@ -31,6 +31,9 @@ Live demo: [dev-chart-three.vercel.app](https://dev-chart-three.vercel.app)
 ### Create Task Form
 ![Create Task](screenshots/new_task.png)
 
+### Move Task
+![Create Task](screenshots/move_task.png)
+
 ---
 
 ## Tech Stack
