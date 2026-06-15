@@ -1,32 +1,47 @@
 # devChart — Club Collaboration Platform
 
-A Kanban-style project management platform built for student clubs to collaborate, track tasks, and ship work together.
+A Kanban-style project management tool built for student clubs. The idea was to take a basic task tracker and turn it into something actually useful for teams — where you can see who's working on what, when things are due, and move work across stages without friction.
+
+Live demo: [dev-chart-three.vercel.app](https://dev-chart-three.vercel.app)
 
 ---
 
-## Features Implemented
+## Features
 
-### Core (Required)
-- **Kanban Board** — Three-column board (To Do → In Progress → Done) on the dashboard
-- **Drag-and-drop** — Drag task cards between columns to update their status
-- **Move buttons** — "← Back" and "Move →" buttons on each card for non-drag interaction
+### Core
+- **Kanban Board** — Three-column layout: To Do, In Progress, and Done
+- **Drag and Drop** — Drag cards between columns to update status instantly
+- **Move Buttons** — "← Back" and "Move →" buttons on each card for keyboard/mobile users
 
-### Additional Features
-1. **Task Deletion** — Delete any task directly from the board with the × button
-2. **Due Dates** — Set an optional deadline when creating a task; overdue tasks are highlighted with ⚠️
-3. **Assignees** — Assign a task to a team member by name; shown on each card with a 👤 icon
+### Additional
+- **Due Dates** — Set deadlines on tasks; overdue ones show a ⚠️ warning automatically
+- **Assignees** — Assign tasks to team members by name, shown on the card
+- **Task Deletion** — Remove tasks with the × button directly from the board
 
 ---
 
-## Technology Stack
+## Screenshots
 
-| Layer      | Technology                    |
-|------------|-------------------------------|
-| Framework  | Next.js 16 (App Router)       |
-| Language   | TypeScript                    |
-| Database   | MongoDB Atlas via Mongoose    |
-| Styling    | Tailwind CSS v4               |
-| Deployment | Vercel                        |
+### Home Page
+![Home Page](screenshots/home.png)
+
+### Kanban Board
+![Kanban Board](screenshots/board.png)
+
+### Create Task Form
+![Create Task](screenshots/new_task.png)
+
+---
+
+## Tech Stack
+
+| Layer      | Technology                 |
+|------------|----------------------------|
+| Framework  | Next.js 16 (App Router)    |
+| Language   | TypeScript                 |
+| Database   | MongoDB Atlas via Mongoose |
+| Styling    | Tailwind CSS v4            |
+| Deployment | Vercel                     |
 
 ---
 
@@ -34,25 +49,25 @@ A Kanban-style project management platform built for student clubs to collaborat
 
 ### Prerequisites
 - Node.js 18+
-- A [MongoDB Atlas](https://www.mongodb.com/atlas) account (free tier works)
+- A [MongoDB Atlas](https://www.mongodb.com/atlas) account 
 
 ### 1. Fork & Clone
 
 ```bash
-git clone https://github.com/<your-username>/devChart.git
+git clone https://github.com/himanshudalmia/devChart.git
 cd devChart
 npm install
 ```
 
-### 2. Configure Environment Variables
+### 2. Environment Variables
 
-Create a `.env.local` file in the project root:
+Create a `.env.local` file in the root folder:
 
 ```env
-MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<dbname>?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/?retryWrites=true&w=majority
 ```
 
-Replace the URI with your own MongoDB Atlas connection string.
+Get your connection string from MongoDB Atlas → Connect → Drivers.
 
 ### 3. Run Locally
 
@@ -60,38 +75,27 @@ Replace the URI with your own MongoDB Atlas connection string.
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## Deployment Instructions (Vercel)
+## Deployment (Vercel)
 
-1. Push your fork to GitHub.
-2. Go to [vercel.com](https://vercel.com) → **New Project** → import your GitHub repo.
-3. Add the `MONGODB_URI` environment variable in the Vercel project settings.
-4. Click **Deploy**.
-
-Vercel auto-detects Next.js and handles the build. Your app will be live at `https://<project>.vercel.app`.
+1. Push your fork to GitHub
+2. Go to [vercel.com](https://vercel.com) → New Project → import the repo
+3. Add `MONGODB_URI` as an environment variable in project settings
+4. Hit Deploy — Vercel handles everything else automatically
 
 ---
 
 ## API Routes
 
-| Method | Route                  | Description             |
-|--------|------------------------|-------------------------|
-| GET    | `/api/tasks`           | Fetch all tasks         |
-| POST   | `/api/tasks`           | Create a new task       |
-| PATCH  | `/api/tasks/[id]`      | Update task fields      |
-| DELETE | `/api/tasks/[id]`      | Delete a task           |
-
----
-
-## Known Limitations
-
-- **No authentication** — anyone with the URL can view, create, or delete tasks.
-- **No real-time sync** — changes by one user are not pushed to others; a page refresh is needed.
-- **Single project** — the board shows all tasks in one shared view with no project/team separation.
-- **Text-only assignees** — assignee is a plain string, not linked to a user account.
+| Method | Route             | Description       |
+|--------|-------------------|-------------------|
+| GET    | `/api/tasks`      | Fetch all tasks   |
+| POST   | `/api/tasks`      | Create a task     |
+| PATCH  | `/api/tasks/[id]` | Update task       |
+| DELETE | `/api/tasks/[id]` | Delete a task     |
 
 ---
 
@@ -101,11 +105,11 @@ Vercel auto-detects Next.js and handles the build. Your app will be live at `htt
 src/
 ├── app/
 │   ├── api/tasks/
-│   │   ├── route.ts          # GET, POST
-│   │   └── [id]/route.ts     # PATCH, DELETE
-│   ├── dashboard/page.tsx    # Kanban board
-│   ├── create-task/page.tsx  # New task form
-│   └── page.tsx              # Landing page
+│   │   ├── route.ts           # GET, POST
+│   │   └── [id]/route.ts      # PATCH, DELETE
+│   ├── dashboard/page.tsx     # Kanban board
+│   ├── create-task/page.tsx   # New task form
+│   └── page.tsx               # Landing page
 ├── components/
 │   └── Navbar.tsx
 ├── lib/
@@ -113,3 +117,12 @@ src/
 └── models/
     └── Tasks.ts
 ```
+
+---
+
+## Known Limitations
+
+- No authentication — anyone with the URL can create or delete tasks
+- No real-time sync between users (need to refresh to see others' changes)
+- Single shared board — no support for multiple projects or teams yet
+- Assignees are plain text, not linked to actual user accounts
